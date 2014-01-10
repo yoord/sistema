@@ -1,0 +1,570 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+
+namespace MATRICULA
+{
+    public partial class ALUMNOS : Form
+    {
+        public ALUMNOS()
+        {
+            InitializeComponent();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+
+                pictureBox2.Visible = true;
+
+
+                Bitmap bmImagen;
+                //Utilizamos un filtro para las extensiones de las imagenes que deseamos buscar
+                openFileDialog1.Filter = "jpeg (*.jpg,*.jpeg)|*.jpg;*.jpeg|gif (*.gif)|*.gif|bitmap   (*.bmp)|*.bmp";
+                //se realiza la llamada al examinador de windows          
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    //capturamos el nombre y extension del archivo en sNombre
+                    string sNombre = openFileDialog1.FileName;
+                    //Convertimos la Imagen en un Bitmap
+                    bmImagen = new Bitmap(sNombre);
+                    //cargamos la imagen en el picturebox
+                    pictureBox2.Image = bmImagen;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand, MessageBoxDefaultButton.Button1);
+            }
+        }
+
+        private void ALUMNOS_Load(object sender, EventArgs e)
+        {
+            llenadistrito();
+            cbodistritos.Text = "";
+
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+
+
+            System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(@"Data Source=.\SQLEXPRESS01;Initial Catalog=MATRICULA_NOTAS;Integrated Security=SSPI");
+
+            SqlCommand comandos = new SqlCommand("insert into ALUMNAS(IDALUMNA,ALUMNA,DIRECCION,FECNAC,DISTRITO,TELEFONO,LIBRETADENOTA,CERTIFICADODEESTUDIO,CERTIFICADODEMEDICO,NOMBREPADRE,APELLIDOPADRE,DNIPADRE,TELEFONOPADRE,NOMBREMADRE,APELLIDOMADRE,DNIMADRE,TELEFONOMADRE,OBSERVACIONES,FOTO) values(@IDALUMNA,@ALUMNA,@DIRECCION,@FECNAC,@DISTRITO,@TELEFONO,@LIBRETADENOTA,@CERTIFICADODEESTUDIO,@CERTIFICADODEMEDICO,@NOMBREPADRE,@APELLIDOPADRE,@DNIPADRE,@TELEFONOPADRE,@NOMBREMADRE,@APELLIDOMADRE,@DNIMADRE,@TELEFONOMADRE,@OBSERVACIONES,@FOTO)", conn);
+
+            MemoryStream stream = new MemoryStream();
+
+            pictureBox2.Image.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+            ///////////////////////////////////////////////////////////////
+
+            comandos.Parameters.Add("@IDalumna", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@IDalumna"].Value = txtcodigo.Text;
+
+
+            ///////////////////////////////////////////////
+
+            comandos.Parameters.Add("@alumna", System.Data.SqlDbType.VarChar);
+
+            comandos.Parameters["@alumna"].Value = txtalumna.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+
+            comandos.Parameters.Add("@direccion", System.Data.SqlDbType.VarChar);
+
+            comandos.Parameters["@direccion"].Value = txtdireccion_alumna.Text;
+            ///////////////////////////////////////////////
+
+            comandos.Parameters.Add("@fecnac", System.Data.SqlDbType.VarChar);
+
+            comandos.Parameters["@fecnac"].Value = txtfecha.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@distrito", System.Data.SqlDbType.VarChar);
+
+            comandos.Parameters["@distrito"].Value = cbodistritos.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+
+            comandos.Parameters.Add("@telefono", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@telefono"].Value = txtelefono_alumno.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+
+            comandos.Parameters.Add("@libretadenota", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@libretadenota"].Value = NOTAS.Checked;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@certificadodeestudio", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@certificadodeestudio"].Value = ESTUDIO.Checked;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@certificadodemedico", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@certificadodemedico"].Value = MEDICO.Checked;
+
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@nombrepadre", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@nombrepadre"].Value = txtnombrepadre.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@apellidopadre", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@apellidopadre"].Value = txtapellidopadre.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@dnipadre", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@dnipadre"].Value = txtdnipadre.Text;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            comandos.Parameters.Add("@telefonopadre", System.Data.SqlDbType.Char);
+
+            comandos.Parameters["@telefonopadre"].Value = txttelefonopadre.Text;
+
+            /////////////////////////////////////////////////////////////////////////    ''
+            comandos.Parameters.Add("@nombremadre", System.Data.SqlDbType.NVarChar);
+
+            comandos.Parameters["@nombremadre"].Value = txtnombresmadre.Text;
+
+            /////////////////////////////////////////////////////////////////////////    ''
+            comandos.Parameters.Add("@apellidomadre", System.Data.SqlDbType.NVarChar);
+
+            comandos.Parameters["@apellidomadre"].Value = txtapellidosmadre.Text;
+
+            /////////////////////////////////////////////////////////////////////////    ''
+            comandos.Parameters.Add("@dnimadre", System.Data.SqlDbType.NVarChar);
+
+            comandos.Parameters["@dnimadre"].Value = txtdnimadre.Text;
+
+            /////////////////////////////////////////////////////////////////////////    ''
+            comandos.Parameters.Add("@telefonomadre", System.Data.SqlDbType.NVarChar);
+
+            comandos.Parameters["@telefonomadre"].Value = txttelefonomadre.Text;
+
+            /////////////////////////////////////////////////////////////////////////    ''
+            comandos.Parameters.Add("@observaciones", System.Data.SqlDbType.NVarChar);
+
+            comandos.Parameters["@observaciones"].Value = txtobservacion.Text;
+
+
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            //////////////////////////////////////////////////////////////////////
+            byte[] pic = stream.ToArray();
+
+            comandos.Parameters.AddWithValue("@FOTO", pic);
+            try
+            {
+                conn.Open();
+                comandos.ExecuteNonQuery();
+                MessageBox.Show("Asido Registrado Correctamente", "Guardar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("ERROR :" + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            BORAR_CONTROLES();
+
+
+            pictureBox2.Visible = false;
+
+
+
+        }
+
+        private void radioestudioi_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtalumna_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+
+
+
+
+            BORAR_CONTROLES();
+
+
+
+
+
+
+        }
+
+        
+
+        public void BORAR_CONTROLES()
+
+        {
+
+            txtcodigo.Text = "";
+
+
+
+            txtalumna.Text = "";
+            /////////////////////////////////////////////////////////////////////////    ''
+
+
+            txtdireccion_alumna.Text = "";
+            ///////////////////////////////////////////////
+            txtfecha.Text = "";
+            /////////////////////////////////////////////////////////////////////////    '
+            cbodistritos.Text = "";
+            /////////////////////////////////////////////////////////////////////////    ''
+            txtelefono_alumno.Text = "";
+            /////////////////////////////////////////////////////////////////////////    ''
+            NOTAS.Enabled = false;
+            /////////////////////////////////////////////////////////////////////////    '
+
+            ESTUDIO.Enabled = false;
+            /////////////////////////////////////////////////////////////////////////    ''
+
+            MEDICO.Enabled = false;
+
+            txtnombrepadre.Text = "";
+            /////////////////////////////////////////////////////////////////////////    ''
+            txtapellidopadre.Text = "";
+            /////////////////////////////////////////////////////////////////////////    '
+
+            txtdnipadre.Text = "";
+            /////////////////////////////////////////////////////////////////////////    ''
+            txttelefonopadre.Text = "";
+
+            txtnombresmadre.Text = "";
+
+            txtapellidosmadre.Text = "";
+
+            txtdnimadre.Text = "";
+
+            /////////////////////////////////////////////////////////////////////////    ''
+
+
+            txttelefonomadre.Text = "";
+
+
+            txtobservacion.Text = "";
+
+            pictureBox2.Visible = false;
+
+
+
+
+
+
+
+
+        }
+
+
+
+        public void llenadistrito()
+        {
+
+
+            SqlConnection conexionn = new SqlConnection();
+
+            conexionn.ConnectionString = @"Data Source=.\SQLEXPRESS01;Initial Catalog=MATRICULA_NOTAS;Integrated Security=True";
+
+            DataSet dss = new DataSet();
+
+            SqlDataAdapter daa = new SqlDataAdapter("SELECT disnombre FROM distrito", conexionn);
+
+            daa.Fill(dss, "distrito");
+            cbodistritos.DataSource = dss.Tables[0].DefaultView;
+            cbodistritos.ValueMember = "disnombre";
+            //cbousuario.DisplayMember = "ID_USUARIO";
+
+
+
+        }
+        private void GroupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+
+
+
+
+            SqlConnection miconexion = new SqlConnection(@"Data Source=.\SQLEXPRESS01; Initial Catalog=SISTEMA_BIBLIOTECA; Integrated Security=SSPI");
+
+            DialogResult resultado = MessageBox.Show("¿Esta seguro de eliminar este registro del sistema?", "AVIZO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (resultado == DialogResult.No)
+            {
+                return;
+            }
+            SqlCommand comando = new SqlCommand("Delete from ALUMNAS where IDALUMNA=@idALUMNA", miconexion);
+            comando.Parameters.AddWithValue("idALUMNA", txtcodigo.Text);
+            miconexion.Open();
+            comando.ExecuteNonQuery();
+            miconexion.Close();
+
+            MessageBox.Show("Los datos han sido eliminados correctamente");
+
+
+
+
+
+
+        }
+
+        private void Button3_Click(object sender, EventArgs e)
+        {
+
+
+
+
+            System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(@"Data Source=
+.\SQLEXPRESS;Initial Catalog=MATRICULA_NOTAS;Integrated Security=SSPI");
+
+
+            string idALUMNA= txtcodigo.Text;
+            string ALUMNA = txtalumna.Text;
+            string DIRECCION = txtdireccion_alumna.Text;
+            string TELEFONO = txtelefono_alumno.Text;
+
+   
+            string FECNAC = txtfecha.Text;
+
+            string DISTRITO = cbodistritos.Text;
+
+
+            string nombrepadre = txtnombrepadre.Text;
+            string apellidopadre = txtapellidopadre.Text;
+            string dnipadre = txtdnipadre.Text;
+            string telefonopadre = txttelefonopadre.Text;
+
+
+            string nombresmadre = txtnombresmadre.Text;
+            string apellidomadre = txtapellidosmadre.Text;
+            string dnimadre = txtdnimadre.Text;
+            string telefonomadre = txttelefonomadre.Text;
+
+            string observaciones=txtobservacion.Text;
+
+
+
+            SqlCommand com = new SqlCommand("update ALUMNAS set idALUMNA='" + idALUMNA + "',foto=@Pic,ALUMNA=@ALUMNA,DIRECCION=@DIRECCION,FECNAC=@FECNAC,DISTRITO=@DISTRITO,TELEFONO=@TELEFONO,NOMBREPADRE=@NOMBREPADRE,APELLIDOPADRE=@APELLIDOPADRE,DNIPADRE=@DNIPADRE,TELEFONOPADRE=@TELEFONOPADRE,NOMBREMADRE=@NOMBREMADRE,APELLIDOMADRE=@APELLIDOMADRE,DNIMADRE=@DNIMADRE,TELEFONOMADRE=@TELEFONOMADRE,OBSERVACIONES=@OBSERVACIONES where idALUMNA='" + idALUMNA + "'", con);
+            MemoryStream stream = new MemoryStream();
+
+            pictureBox2.Image.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+            byte[] pic = stream.ToArray();
+
+            com.Parameters.AddWithValue("@Pic", pic);
+
+            //////////////////////////////////////////////////////////////////
+
+            com.Parameters.AddWithValue("@IDALUMNA", idALUMNA);
+            com.Parameters.AddWithValue("@ALUMNA", ALUMNA);
+            com.Parameters.AddWithValue("@DIRECCION", DIRECCION);
+            com.Parameters.AddWithValue("@FECNAC", FECNAC);
+
+
+            com.Parameters.AddWithValue("@DISTRITO", DISTRITO);
+            com.Parameters.AddWithValue("@TELEFONO", TELEFONO);
+
+            NOTAS.Checked = true;
+            MEDICO.Checked = true;
+            ESTUDIO.Checked = true;
+
+            com.Parameters.AddWithValue("@NOMBREPADRE", nombrepadre);
+            com.Parameters.AddWithValue("@APELLIDOPADRE", apellidopadre);
+            com.Parameters.AddWithValue("@DNIPADRE", dnipadre);
+            com.Parameters.AddWithValue("@TELEFONOPADRE",telefonopadre);
+
+
+            com.Parameters.AddWithValue("@NOMBREMADRE",nombresmadre);
+            com.Parameters.AddWithValue("@APELLIDOMADRE", apellidomadre);
+            com.Parameters.AddWithValue("@DNIMADRE", dnimadre);
+            com.Parameters.AddWithValue("@TELEFONOMADRE", telefonomadre);
+
+            com.Parameters.AddWithValue("@observaciones",observaciones);
+            /////////////////////////////////////////////////////////////////
+            try
+            {
+                con.Open();
+                com.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+                MessageBox.Show("Asido modificada Correctamente", "Informacion de Registro", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+
+
+
+            SqlConnection miconexion = new SqlConnection(@"Data Source=.\SQLEXPRESS01; Initial Catalog=matricula_notas;Integrated Security=SSPI");
+
+            SqlDataAdapter adp = new SqlDataAdapter("SELECT IDALUMNA,ALUMNA,DIRECCION,FECNAC,DISTRITO,TELEFONO,LIBRETADENOTA,CERTIFICADODEESTUDIO,CERTIFICADODEMEDICO,NOMBREPADRE,APELLIDOPADRE,DNIPADRE,TELEFONOPADRE,NOMBREMADRE,APELLIDOMADRE,DNIMADRE,TELEFONOMADRE,OBSERVACIONES,FOTO FROM alumnas WHERE alumna LIKE '%" + this.txtconsultar.Text + "%'", miconexion);
+            DataSet ds = new DataSet("foto");
+            adp.Fill(ds, "foto");
+            /////////////////////////////////////////////////////////////////
+            this.txtcodigo.Text = ds.Tables[0].Rows[0]["idalumna"].ToString();
+            this.txtalumna.Text = ds.Tables[0].Rows[0]["alumna"].ToString();
+
+            txtdireccion_alumna.Text = ds.Tables[0].Rows[0]["direccion"].ToString();
+            this.txtfecha.Text = ds.Tables[0].Rows[0]["fecnac"].ToString();
+        
+            this.cbodistritos.Text = ds.Tables[0].Rows[0]["distrito"].ToString();
+
+            txtelefono_alumno.Text = ds.Tables[0].Rows[0]["telefono"].ToString();
+
+
+            NOTAS.Checked = true; 
+            MEDICO.Checked=true ;
+   ESTUDIO.Checked = true;
+ 
+
+
+            this.txtnombrepadre.Text = ds.Tables[0].Rows[0]["nombrepadre"].ToString();
+            this.txtapellidopadre.Text = ds.Tables[0].Rows[0]["apellidopadre"].ToString();
+            this.txtdnipadre.Text = ds.Tables[0].Rows[0]["dnipadre"].ToString();
+            this.txttelefonopadre.Text = ds.Tables[0].Rows[0]["telefonopadre"].ToString();
+
+
+            this.txtnombresmadre.Text = ds.Tables[0].Rows[0]["nombremadre"].ToString();
+            this.txtapellidosmadre.Text = ds.Tables[0].Rows[0]["apellidomadre"].ToString();
+            this.txtdnimadre.Text = ds.Tables[0].Rows[0]["dnimadre"].ToString();
+            this.txttelefonomadre.Text = ds.Tables[0].Rows[0]["telefonomadre"].ToString();
+
+          this.txtobservacion.Text = ds.Tables[0].Rows[0]["observaciones"].ToString();
+
+
+            //////////////////////////////////////////////////////////////////////////////////
+
+            byte[] datos = new byte[0];
+
+            DataRow dr = ds.Tables["foto"].Rows[0];
+
+            datos = (byte[])dr["foto"];
+
+            System.IO.MemoryStream ms = new System.IO.MemoryStream(datos);
+
+            pictureBox2.Image = System.Drawing.Bitmap.FromStream(ms);
+
+            ////////////////////////////////////////////////////////////////////////
+
+
+                
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+           IMPRESION_ALUMNOS abrir = new IMPRESION_ALUMNOS();
+
+            abrir.Show();
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+        private void txttelefonomadre_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            DialogResult resultado = MessageBox.Show("¿Desea Salir del Registro Alumnos?", "Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (resultado == DialogResult.No)
+            {
+
+                return;
+
+
+
+            }
+
+            this.Dispose();
+            this.Hide();
+        }
+    }
+}
